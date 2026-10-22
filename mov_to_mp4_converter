@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MOV to MP4 Converter</title>
+<style>
+:root{color-scheme:dark;--bg:#0b0d12;--panel:#141821;--line:#293141;--text:#f4f6fb;--muted:#9ca7b8;--accent:#e94560;--accent2:#ff6b7d;--good:#58d6a5}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#1a2030 0,#0b0d12 55%);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh;display:grid;place-items:center;padding:24px}
+main{width:min(760px,100%)}.brand{display:flex;align-items:center;gap:12px;margin-bottom:28px}.logo{width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,var(--accent),#a51e49);display:grid;place-items:center;font-size:23px;box-shadow:0 8px 30px #e9456030}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.15em;color:var(--accent2);font-weight:800}h1{font-size:clamp(30px,6vw,44px);line-height:1.08;margin:5px 0 10px;letter-spacing:-.04em}.sub{color:var(--muted);margin:0 0 25px}.panel{background:#141821eF;border:1px solid var(--line);border-radius:22px;padding:clamp(18px,4vw,30px);box-shadow:0 25px 80px #0005}.drop{border:1.5px dashed #485368;border-radius:16px;padding:30px 18px;text-align:center;cursor:pointer;transition:.2s;background:#0e121a}.drop:hover,.drop.drag{border-color:var(--accent2);background:#21131b}.drop strong{display:block;font-size:18px;margin:9px 0 4px}.drop small{color:var(--muted)}.uploadicon{font-size:32px}.file-row{display:none;align-items:center;gap:12px;padding:13px;margin-top:16px;border:1px solid var(--line);border-radius:12px;background:#0e121a}.file-row.show{display:flex}.file-icon{font-size:24px}.file-info{min-width:0;flex:1}.filename{font-weight:700;overflow-wrap:anywhere}.filesize{font-size:13px;color:var(--muted)}.remove{border:0;background:transparent;color:var(--muted);font-size:21px;cursor:pointer;padding:4px 8px}.settings{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:22px 0 16px;flex-wrap:wrap}.setting-label{font-weight:700}.setting-help{font-size:13px;color:var(--muted)}select{background:#0e121a;color:var(--text);border:1px solid var(--line);padding:10px 12px;border-radius:10px;font:inherit}.btn{width:100%;border:0;border-radius:12px;padding:14px 18px;background:linear-gradient(100deg,var(--accent),#c52a52);color:white;font-weight:800;font-size:16px;cursor:pointer;transition:.2s}.btn:hover{filter:brightness(1.1);transform:translateY(-1px)}.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}.progress-wrap{display:none;margin-top:20px}.progress-wrap.show{display:block}.progress-head{display:flex;justify-content:space-between;gap:12px;font-size:14px;margin-bottom:8px}.progress-head span:last-child{color:var(--muted)}.bar{height:8px;background:#2a3040;border-radius:99px;overflow:hidden}.bar-in{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--good));transition:width .2s}.status{color:var(--muted);font-size:13px;margin-top:9px;white-space:pre-wrap}.result{display:none;margin-top:18px;border:1px solid #2c6553;background:#10241f;border-radius:14px;padding:16px}.result.show{display:block}.result h3{margin:0 0 5px;color:var(--good)}.result p{margin:0 0 13px;color:#c5d5d0;font-size:14px}.download{display:inline-block;text-decoration:none;background:var(--good);color:#082117;font-weight:800;padding:10px 14px;border-radius:10px}.note{margin:18px 2px 0;color:var(--muted);font-size:12px}.note b{color:#d7deea}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}.step{border:1px solid var(--line);border-radius:12px;padding:12px;font-size:13px;color:var(--muted)}.step b{display:block;color:var(--text);margin-bottom:3px}@media(max-width:520px){body{padding:15px}.steps{grid-template-columns:1fr}.panel{border-radius:17px}}
+</style>
+</head>
+<body>
+<main>
+  <div class="brand"><div class="logo">⇄</div><div><div class="eyebrow">Quick video tool</div><div style="font-weight:800">ClipConvert</div></div></div>
+  <h1>MOV to MP4<br>Converter</h1>
+  <p class="sub">Convert your videos right in your browser. No account and no upload to a conversion server.</p>
+  <section class="panel">
+    <div class="drop" id="drop" role="button" tabindex="0" aria-label="Choose a MOV video">
+      <div class="uploadicon"></div><strong>Drop your MOV file here</strong><small>or click to browse your device</small>
+      <input id="file" type="file" accept=".mov,video/quicktime,video/*" hidden>
+    </div>
+    <div class="file-row" id="fileRow"><div class="file-icon">🎬</div><div class="file-info"><div class="filename" id="fileName"></div><div class="filesize" id="fileSize"></div></div><button class="remove" id="remove" aria-label="Remove file">×</button></div>
+    <div class="settings">
+      <div><div class="setting-label">Output format</div><div class="setting-help">MP4 · H.264 video + AAC audio</div></div>
+      <select id="quality" aria-label="Video quality"><option value="high">High quality</option><option value="balanced" selected>Balanced (recommended)</option><option value="small">Smaller file</option></select>
+    </div>
+    <button class="btn" id="convert" disabled>Convert to MP4</button>
+    <div class="progress-wrap" id="progressWrap"><div class="progress-head"><strong id="progressTitle">Preparing converter…</strong><span id="percent">0%</span></div><div class="bar"><div class="bar-in" id="bar"></div></div><div class="status" id="status">The first conversion downloads the conversion engine and may take a little while.</div></div>
+    <div class="result" id="result"><h3>✓ Your MP4 is ready</h3><p id="resultInfo">Conversion completed.</p><a class="download" id="download" download="converted.mp4" href="#">Download MP4</a></div>
+    <div class="note"><b>Privacy:</b> your video is processed locally in this browser. The converter engine is loaded from a CDN. Large files need enough free memory and may be slow on phones.</div>
+  </section>
+  <div class="steps"><div class="step"><b>01 · Select</b>Choose a MOV video from your device.</div><div class="step"><b>02 · Convert</b>Choose a quality preset and start conversion.</div><div class="step"><b>03 · Save</b>Download the finished MP4 file.</div></div>
+</main>
+<script type="module">
+const $ = id => document.getElementById(id);
+const fileInput=$('file'), drop=$('drop'), convertBtn=$('convert');
+let selectedFile=null, ffmpeg=null, outputUrl=null, busy=false;
+const fmtBytes=n=>{if(n<1024)return n+' B';const u=['KB','MB','GB'];let i=-1;do{n/=1024;i++}while(n>=1024&&i<u.length-1);return n.toFixed(1)+' '+u[i]};
+function choose(file){if(!file)return; if(busy)return; selectedFile=file;$('fileName').textContent=file.name;$('fileSize').textContent=fmtBytes(file.size);$('fileRow').classList.add('show');convertBtn.disabled=false;$('result').classList.remove('show');$('progressWrap').classList.remove('show');if(outputUrl){URL.revokeObjectURL(outputUrl);outputUrl=null;}}
+drop.addEventListener('click',()=>fileInput.click());
+drop.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fileInput.click()}});
+fileInput.addEventListener('change',e=>choose(e.target.files[0]));
+$('remove').addEventListener('click',()=>{if(busy)return;selectedFile=null;fileInput.value='';$('fileRow').classList.remove('show');convertBtn.disabled=true;$('result').classList.remove('show');});
+for(const event of ['dragenter','dragover'])drop.addEventListener(event,e=>{e.preventDefault();drop.classList.add('drag')});
+for(const event of ['dragleave','drop'])drop.addEventListener(event,e=>{e.preventDefault();drop.classList.remove('drag')});
+drop.addEventListener('drop',e=>choose(e.dataTransfer.files[0]));
+function setProgress(p,title,status){$('progressWrap').classList.add('show');$('bar').style.width=Math.max(0,Math.min(100,p))+'%';$('percent').textContent=Math.round(p)+'%';if(title)$('progressTitle').textContent=title;if(status)$('status').textContent=status;}
+async function getEngine(){
+ if(ffmpeg)return ffmpeg;
+ setProgress(0,'Loading converter…','The first run downloads the video engine. Keep this tab open.');
+ const { FFmpeg } = await import('https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/esm/index.js');
+ const { toBlobURL } = await import('https://unpkg.com/@ffmpeg/util@0.12.1/dist/esm/index.js');
+ ffmpeg=new FFmpeg();
+ ffmpeg.on('progress',({progress})=>setProgress(10+progress*85,'Converting video…','Conversion is running on your device.'));
+ ffmpeg.on('log',({message})=>{if(/error/i.test(message))$('status').textContent=message;});
+ const base='https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
+ const ffmpegBase='https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/esm';
+ const classWorkerURL=await toBlobURL(ffmpegBase+'/worker.js','text/javascript');
+ await ffmpeg.load({classWorkerURL,coreURL:await toBlobURL(base+'/ffmpeg-core.js','text/javascript'),wasmURL:await toBlobURL(base+'/ffmpeg-core.wasm','application/wasm')});
+ return ffmpeg;
+}
+convertBtn.addEventListener('click',async()=>{
+ if(!selectedFile||busy)return;busy=true;convertBtn.disabled=true;$('result').classList.remove('show');
+ if(outputUrl){URL.revokeObjectURL(outputUrl);outputUrl=null;}
+ try{
+  setProgress(2,'Starting…','Preparing your selected video.');
+  const engine=await getEngine();
+  const ext=(selectedFile.name.split('.').pop()||'mov').replace(/[^a-z0-9]/gi,'').toLowerCase()||'mov';
+  const inputName='input.'+ext, outputName='converted.mp4';
+  try{await engine.deleteFile(inputName)}catch{}
+  try{await engine.deleteFile(outputName)}catch{}
+  await engine.writeFile(inputName,new Uint8Array(await selectedFile.arrayBuffer()));
+  const preset=$('quality').value;
+  const crf=preset==='high'?'18':preset==='small'?'27':'23';
+  setProgress(10,'Converting video…','This can take several minutes for large videos.');
+  await engine.exec(['-i',inputName,'-map','0:v:0?','-map','0:a:0?','-c:v','libx264','-preset','veryfast','-crf',crf,'-pix_fmt','yuv420p','-c:a','aac','-b:a',preset==='small'?'96k':'128k','-movflags','+faststart','-y',outputName]);
+  const data=await engine.readFile(outputName);
+  outputUrl=URL.createObjectURL(new Blob([data.buffer],{type:'video/mp4'}));
+  const baseName=selectedFile.name.replace(/\.[^.]+$/,'').replace(/[^\w\- ]+/g,'').trim()||'converted';
+  $('download').href=outputUrl;$('download').download=baseName+'.mp4';
+  $('resultInfo').textContent=`${baseName}.mp4 · ${fmtBytes(data.byteLength)} · ${preset==='high'?'High':preset==='small'?'Smaller file':'Balanced'} quality`;
+  $('result').classList.add('show');setProgress(100,'Conversion complete','Your file is ready to download.');
+  try{await engine.deleteFile(inputName);await engine.deleteFile(outputName)}catch{}
+ }catch(err){
+  setProgress(0,'Conversion failed',String(err?.message||err)+'\nTry a smaller file or reload the page and try again.');
+ }finally{busy=false;convertBtn.disabled=!selectedFile;convertBtn.textContent='Convert to MP4';}
+});
+</script>
+</body>
+</html>
